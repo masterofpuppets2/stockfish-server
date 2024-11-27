@@ -2,8 +2,7 @@
   "name": "stockfish-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
-  "type": "module",
+  "main": "server.js",
   "scripts": {
     "start": "node api/server.js"
   },
