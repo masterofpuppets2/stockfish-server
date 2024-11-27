@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "env": {
+    "NODE_ENV": "prod"
+  },
+  "build": {
+    "commands": {
+      "install": "npm install"
+    }
+  }
+}
