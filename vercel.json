@@ -1,17 +1,12 @@
 {
   "version": 2,
-  "rewrites": [
+  "builds": [
     {
-      "source": "/(.*)",
-      "destination": "/api"
+      "src": "index.js",
+      "use": "@vercel/node"
     }
   ],
   "env": {
     "NODE_ENV": "prod"
-  },
-  "build": {
-    "commands": {
-      "install": "npm install"
-    }
   }
 }
