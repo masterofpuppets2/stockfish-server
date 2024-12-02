@@ -17,37 +17,44 @@ app.options("", cors(corsConfig));
 
 app.use(express.json());
 
-app.get("/", (req, res) => {
+app.get("/", (res) => {
   res.send("Stockfish-Server is running");
 });
 
 app.post("/", (req, res) => {
-  const { position, depth } = req.body;
+  const { position, depth, lines } = req.body;
 
   const engine = StockfishInstance.getInstance();
 
   engine.setBoardstateByFen(position);
 
-  engine.startAnalysing({
-    lines: 1, //only one move
-  });
+  engine.startAnalysing({ lines: lines });
+
+  const analysisResults = [];
 
   engine.onAnalysisData((analysisData) => {
     console.log(`Analyse für Tiefe ${analysisData.depth}:`);
-    let bestMove = null;
 
-    for (const line of analysisData.lines) {
+    // Varianten für alle Tiefen in der Console ausgeben
+    analysisData.lines.forEach((line) => {
       console.log(`\t${line.score}: ${line.moves.join(" ")}`);
-      if (!bestMove) {
-        bestMove = line.moves.join(" ");
-      }
-    }
+    });
 
-    console.log("");
-
+    // Ergebnisse nur bei Erreichen der gewünschten Tiefe zurückgeben
     if (analysisData.depth >= depth) {
+      analysisData.lines.forEach((line) => {
+        analysisResults.push({
+          score: line.score.score,
+          moves: line.moves.join(" "),
+        });
+      });
+
+      // Engine beenden und Ergebnisse zurückgeben
       engine.terminate();
-      res.json({ bestMove });
+      res.json({
+        // depth: analysisData.depth,
+        variants: analysisResults,
+      });
     }
   });
 });
