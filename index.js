@@ -2,8 +2,28 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { StockfishInstance } from "node-stockfish";
+import { Chess } from "chess.js";
 
 dotenv.config();
+
+const formatChessMoves = (variantMoves, position) => {
+  const variationGame = new Chess(position);
+  const movesArray = variantMoves.split(" ");
+  const formattedMoves = [];
+
+  for (const move of movesArray) {
+    const sanMove = variationGame.move({
+      from: move.slice(0, 2),
+      to: move.slice(2, 4),
+    });
+
+    if (sanMove) {
+      formattedMoves.push(sanMove.san);
+    }
+  }
+
+  return formattedMoves.join(" ");
+};
 
 const app = express();
 
@@ -36,16 +56,17 @@ app.post("/", (req, res) => {
     console.log(`Analyse für Tiefe ${analysisData.depth}:`);
 
     // Varianten für alle Tiefen in der Console ausgeben
-    analysisData.lines.forEach((line) => {
-      console.log(`\t${line.score}: ${line.moves.join(" ")}`);
-    });
+    // analysisData.lines.forEach((line) => {
+    //   console.log(`\t${line.score}: ${line.moves.join(" ")}`);
+    // });
 
     // Ergebnisse nur bei Erreichen der gewünschten Tiefe zurückgeben
     if (analysisData.depth >= depth) {
       analysisData.lines.forEach((line) => {
+        const formattedMoves = formatChessMoves(line.moves.join(" "), position);
         analysisResults.push({
           score: line.score.score,
-          moves: line.moves.join(" "),
+          moves: formattedMoves,
         });
       });
 

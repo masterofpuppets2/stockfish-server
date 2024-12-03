@@ -15,3 +15,7 @@ curl -w "Total time: %{time_total}s\n" -o /dev/null -s \
 -d '{"position": "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", "depth": 15, "lines":3}'
 
 -> depth 15 seems to be fine, it takes about 3-4 sec
+
+uses under the hood this page:
+https://github.com/official-stockfish/Stockfish
+so it is currently using Stockfish 17
